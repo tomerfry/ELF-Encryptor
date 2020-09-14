@@ -58,7 +58,7 @@ def main():
             packed_file.write(binary_file.read())
 
     packed_file.seek(0)
-    packed_file.write(struct.pack(ELF_FILE_HEADER_FORMAT, e_ident, e_type, e_machine, e_version, e_entry, e_phoff,
+    packed_file.write(struct.pack(ELF_FILE_HEADER_FORMAT, e_ident, e_type, e_machine, e_version, new_entry, e_phoff,
                                   0, e_flags, e_ehsize, e_phentsize, 3, e_shentsize, 0, 0))
 
     packed_file.close()
