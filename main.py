@@ -44,6 +44,7 @@ def main():
                                                                                                 packed_phdr)
         if p_type == PT_LOAD and p_flags == READ_PERM | EXEC_PERM:
             new_entry = p_vaddr
+            print(new_entry)
             binary_file.seek(p_offset)
 
             with open('stub.nasm', 'w') as f:
