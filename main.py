@@ -38,19 +38,19 @@ def main():
                                           os.path.getsize(binary), os.path.getsize(binary), p_align))
             packed_file.write(phdrs[-1])
 
-    # Write the program segment to the packed file.
+    # Write the program segments to the packed file.
     for packed_phdr in phdrs:
         p_type, p_flags, p_offset, p_vaddr, p_paddr, p_filesz, p_memsz, p_align = struct.unpack(PHDR_STRUCT_FORMAT,
                                                                                                 packed_phdr)
         if p_type == PT_LOAD and p_flags == READ_PERM | EXEC_PERM:
-            packed_file.write(b'\xcc' * e_entry)
 
+            new_entry = STUB_ENTRY
             with open('stub.nasm', 'w') as f:
-                f.write(STUB_PROGRAM.format(entry=hex(p_vaddr)))
+                f.write(STUB_PROGRAM)
 
             os.system('nasm ./stub.nasm')
             with open('stub', 'rb') as f:
-                packed_file.write(f.read().ljust(p_filesz - e_entry, b'\xcc'))
+                packed_file.write(f.read().ljust(p_filesz, b'\xcc'))
 
         elif p_type == PT_LOAD and p_flags == READ_PERM | WRITE_PERM:
             packed_file.seek(p_offset)
@@ -58,7 +58,7 @@ def main():
             packed_file.write(binary_file.read())
 
     packed_file.seek(0)
-    packed_file.write(struct.pack(ELF_FILE_HEADER_FORMAT, e_ident, e_type, e_machine, e_version, new_entry, e_phoff,
+    packed_file.write(struct.pack(ELF_FILE_HEADER_FORMAT, e_ident, e_type, e_machine, e_version, e_entry, e_phoff,
                                   0, e_flags, e_ehsize, e_phentsize, 3, e_shentsize, 0, 0))
 
     packed_file.close()

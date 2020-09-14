@@ -24,7 +24,7 @@ PT_HIPROC = 0x7FFFFFFF
 
 STUB_PROGRAM = """
 [bits 64]
-[org {entry}]
 
 jmp $
 """
+STUB_ENTRY = 64 + (56 * 3)
