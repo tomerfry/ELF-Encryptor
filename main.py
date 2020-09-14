@@ -43,26 +43,23 @@ def main():
         p_type, p_flags, p_offset, p_vaddr, p_paddr, p_filesz, p_memsz, p_align = struct.unpack(PHDR_STRUCT_FORMAT,
                                                                                                 packed_phdr)
         if p_type == PT_LOAD and p_flags == READ_PERM | EXEC_PERM:
-            new_entry = p_vaddr
-            print(new_entry)
-            binary_file.seek(p_offset)
+            packed_file.write(b'\xcc' * e_entry)
 
             with open('stub.nasm', 'w') as f:
                 f.write(STUB_PROGRAM.format(entry=hex(p_vaddr)))
 
             os.system('nasm ./stub.nasm')
             with open('stub', 'rb') as f:
-                packed_file.write(f.read().ljust(p_filesz, b'\xcc'))
+                packed_file.write(f.read().ljust(p_filesz - e_entry, b'\xcc'))
 
         elif p_type == PT_LOAD and p_flags == READ_PERM | WRITE_PERM:
             packed_file.seek(p_offset)
             binary_file.seek(0)
             packed_file.write(binary_file.read())
 
-
     packed_file.seek(0)
     packed_file.write(struct.pack(ELF_FILE_HEADER_FORMAT, e_ident, e_type, e_machine, e_version, new_entry, e_phoff,
-                                  e_shoff, e_flags, e_ehsize, e_phentsize, e_phnum, e_shentsize, e_shnum, e_shstrndx))
+                                  0, e_flags, e_ehsize, e_phentsize, 3, e_shentsize, 0, 0))
 
     packed_file.close()
     binary_file.close()
