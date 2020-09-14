@@ -26,5 +26,5 @@ STUB_PROGRAM = """
 [bits 64]
 [org {entry}]
 
-int3
+jmp $
 """
