@@ -45,7 +45,6 @@ def main():
         if p_type == PT_LOAD and p_flags == READ_PERM | EXEC_PERM:
             new_entry = p_vaddr
             binary_file.seek(p_offset)
-            packed_file.write(b'\xcc' * p_filesz)
 
             with open('stub.nasm', 'w') as f:
                 f.write(STUB_PROGRAM.format(entry=hex(p_vaddr)))
