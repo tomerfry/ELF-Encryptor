@@ -45,10 +45,6 @@ def main():
         if p_type == PT_LOAD and p_flags == READ_PERM | EXEC_PERM:
 
             new_entry = STUB_ENTRY
-            with open('stub.nasm', 'w') as f:
-                f.write(STUB_PROGRAM)
-
-            os.system('nasm ./stub.nasm')
             with open('stub', 'rb') as f:
                 packed_file.write(f.read().ljust(p_filesz, b'\xcc'))
 
