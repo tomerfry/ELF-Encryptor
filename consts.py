@@ -59,4 +59,38 @@ SHF_ORDERED = 0x4000000
 SHF_EXCLUDE = 0x8000000
 
 KEY_VALUE = 0xaa
+STUB_FORMAT = """
+[bits 64]
+
+push rax
+push rdi
+push rsi
+push rdx
+
+mov rax, 0xa
+mov rdi, {text_segment_start} ;start
+mov rsi, {text_segment_len} ;len
+mov rdx, 7 ;prot
+syscall
+
+mov rdi, {text_section_start}
+mov rsi, rdi
+mov rcx, {text_section_size}
+
+cld
+my_loop:
+    lodsb
+    xor al, 0xaa
+    stosb
+loop my_loop
+
+pop rdx
+pop rsi
+pop rdi
+pop rax
+
+push {original_entry}
+ret
+"""
+STUB_ASM_FILE = 'stub.asm'
 STUB_FILE = 'stub'
