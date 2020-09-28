@@ -22,7 +22,6 @@ my_loop:
     stosb
 loop my_loop
 
-
 pop rdx
 pop rsi
 pop rdi
