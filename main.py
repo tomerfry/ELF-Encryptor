@@ -22,13 +22,13 @@ def inject_stub(binary_obj, stub, stub_size):
 
 
 def load_stub(text_segment_start, text_segment_len, text_section_start, text_section_size, original_entry):
-    with open(STUB_ASM_FILE, 'wb') as stub_asm_file:
-        stub_asm_file.write(STUB_FORMAT.format(text_segment_start=text_segment_start,
-                                               text_segment_len=text_segment_len,
-                                               text_section_start=text_section_start,
-                                               text_section_size=text_section_size,
-                                               original_entry=original_entry))
-        os.system('nasm {}'.format(STUB_ASM_FILE))
+    with open(STUB_ASM_FILE, 'w') as stub_asm_file:
+        stub_asm_file.write(STUB_FORMAT.format(text_segment_start=hex(text_segment_start),
+                                               text_segment_len=hex(text_segment_len),
+                                               text_section_start=hex(text_section_start),
+                                               text_section_size=hex(text_section_size),
+                                               original_entry=hex(original_entry)))
+    os.system('nasm {}'.format(STUB_ASM_FILE))
 
     with open(STUB_FILE, 'rb') as stub_file:
         stub = stub_file.read()
@@ -81,7 +81,7 @@ def main():
         print('[+] Cannot inject stub')
         return -1
 
-    inject_stub(binary_obj, stub, stub_size)
+    inject_stub(binary_obj, stub, len(stub))
     encrypt_text_section(binary_obj)
 
     binary_obj.construct_binary('clone')
